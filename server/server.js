@@ -11,7 +11,16 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+// Restrict CORS to the deployed frontend when CLIENT_URL is set;
+// otherwise allow all origins (handy for local dev). Auth uses JWT
+// bearer tokens, not cookies, so credentials aren't required.
+app.use(
+  cors(
+    process.env.CLIENT_URL
+      ? { origin: process.env.CLIENT_URL }
+      : {}
+  )
+);
 app.use(express.json());
 
 app.use(

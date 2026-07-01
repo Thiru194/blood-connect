@@ -1,0 +1,154 @@
+.hero-section {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #CC1036 0%, #9B1250 45%, #7A1062 100%);
+  isolation: isolate;
+}
+
+/* Soft decorative glows that add depth without extra markup weight */
+.hero-section::before,
+.hero-section::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(10px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hero-section::before {
+  width: 420px;
+  height: 420px;
+  top: -160px;
+  right: -120px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 70%);
+}
+
+.hero-section::after {
+  width: 360px;
+  height: 360px;
+  bottom: -150px;
+  left: -110px;
+  background: radial-gradient(circle, rgba(255, 196, 0, 0.16), transparent 70%);
+}
+
+/* Floating blood-drop accents */
+.hero-blob {
+  position: absolute;
+  z-index: -1;
+  color: rgba(255, 255, 255, 0.12);
+  animation: hero-float 6s ease-in-out infinite;
+}
+
+.hero-blob--1 {
+  top: 18%;
+  left: 8%;
+  font-size: 2.5rem;
+  animation-delay: 0s;
+}
+
+.hero-blob--2 {
+  top: 62%;
+  right: 10%;
+  font-size: 3.5rem;
+  animation-delay: 1.5s;
+}
+
+.hero-blob--3 {
+  bottom: 14%;
+  left: 16%;
+  font-size: 2rem;
+  animation-delay: 3s;
+}
+
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-18px) rotate(8deg); }
+}
+
+/* Entrance animation for the main content */
+.hero-content {
+  animation: hero-rise 0.7s ease both;
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-badge {
+  backdrop-filter: blur(6px);
+  letter-spacing: 0.02em;
+}
+
+/* Fluid, responsive headline that scales with the viewport */
+.hero-title {
+  font-size: clamp(2.1rem, 5.5vw, 3.75rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.18);
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.7;
+  max-width: 720px;
+}
+
+.hero-pulse {
+  animation: hero-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes hero-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+}
+
+/* CTA buttons: lift and glow on hover */
+.hero-cta {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.hero-cta:hover,
+.hero-cta:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.28);
+}
+
+/* Glassy stat tiles */
+.hero-stat {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 1rem;
+  padding: 1rem 0.5rem;
+  backdrop-filter: blur(8px);
+  transition: transform 0.3s ease, background 0.3s ease;
+  height: 100%;
+}
+
+.hero-stat:hover {
+  transform: translateY(-6px);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.hero-stat-number {
+  font-size: clamp(1.3rem, 3vw, 1.9rem);
+}
+
+/* Tighten things up on small screens */
+@media (max-width: 575.98px) {
+  .hero-blob { display: none; }
+  .hero-stat { border-radius: 0.85rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-blob,
+  .hero-content,
+  .hero-pulse,
+  .hero-cta {
+    animation: none;
+    transition: none;
+  }
+}

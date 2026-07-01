@@ -1,0 +1,51 @@
+/* Shared polish for the home-page sections (WhyDonate, BloodGroups,
+   Testimonials, EmergencyRequest) so they feel consistent with the Hero. */
+
+/* Fluid section headings that scale smoothly with the viewport */
+.section-heading {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* Cards that gently lift and deepen their shadow on hover */
+.lift-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.lift-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 1.25rem 2.5rem rgba(15, 23, 42, 0.12) !important;
+}
+
+/* The circular icon badge inside a lift-card animates along with it */
+.lift-card .section-icon {
+  transition: transform 0.3s ease;
+}
+
+.lift-card:hover .section-icon {
+  transform: scale(1.08);
+}
+
+/* Gradient CTA panels get a subtle glow lift too */
+.cta-panel {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cta-panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 1.5rem 3rem rgba(204, 16, 54, 0.28) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lift-card,
+  .lift-card .section-icon,
+  .cta-panel {
+    transition: none;
+  }
+
+  .lift-card:hover,
+  .cta-panel:hover {
+    transform: none;
+  }
+}

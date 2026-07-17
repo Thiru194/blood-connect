@@ -32,6 +32,8 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { createRequest, getRequests } from "../services/requestService";
 
+import "./BloodRequests.css";
+
 function BloodRequests() {
   const navigate = useNavigate();
 
@@ -114,43 +116,83 @@ function BloodRequests() {
     return { bg: "warning-subtle", text: "warning" };
   };
 
+  const getInitials = (name = "") =>
+    name
+      .split(" ")
+      .map((n) => n[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+
+  // Live stats for the hero, derived from the loaded requests.
+  const totalUnits = requests.reduce(
+    (sum, r) => sum + (Number(r.unitsRequired) || 0),
+    0
+  );
+  const cityCount = new Set(
+    requests.map((r) => (r.city || "").trim().toLowerCase()).filter(Boolean)
+  ).size;
+
   return (
     <div className="bg-light min-vh-100 d-flex flex-column">
       <Navbar />
 
       {/* Hero */}
-      <div className="bg-danger text-white text-center py-5">
-        <Container>
+      <div className="request-hero text-white text-center py-5">
+        <Container className="pb-4">
           <Badge
             bg="light"
             text="danger"
-            className="d-inline-flex align-items-center gap-2 mb-3 px-3 py-2 rounded-pill"
+            className="d-inline-flex align-items-center gap-2 mb-3 px-3 py-2 rounded-pill fw-semibold"
           >
             <FaTint /> Blood Requests
           </Badge>
-          <h1 className="fw-bold display-5 mb-2">Request Blood</h1>
-          <p
-            className="lead text-white-50 mb-0 mx-auto"
-            style={{ maxWidth: 560 }}
-          >
+          <h1 className="request-hero-title mb-2">Request Blood</h1>
+          <p className="request-hero-sub text-white opacity-75 mb-4 mx-auto">
             Raise a request and reach available donors around you instantly.
           </p>
+
+          <div className="request-hero-stats">
+            <span className="request-stat-pill">
+              <FaClipboardList />
+              <span>
+                <strong>{requests.length}</strong> Requests
+              </span>
+            </span>
+            <span className="request-stat-pill">
+              <FaTint />
+              <span>
+                <strong>{totalUnits}</strong> Units needed
+              </span>
+            </span>
+            <span className="request-stat-pill">
+              <FaMapMarkerAlt />
+              <span>
+                <strong>{cityCount}</strong> {cityCount === 1 ? "City" : "Cities"}
+              </span>
+            </span>
+          </div>
         </Container>
       </div>
 
-      <Container className="py-5 flex-grow-1">
+      <Container className="pb-5 flex-grow-1">
         <Row className="g-4">
           {/* Request form */}
           <Col xs={12}>
-            <Card className="border-0 shadow-sm rounded-4">
+            <Card className="request-form-card border-0">
               <Card.Body className="p-4 p-md-5">
-                <div className="d-flex align-items-center gap-2 mb-1">
-                  <FaPlusCircle className="text-danger" />
-                  <h4 className="fw-bold mb-0">New Request</h4>
+                <div className="d-flex align-items-center gap-3 mb-1">
+                  <span className="request-icon-chip">
+                    <FaPlusCircle />
+                  </span>
+                  <div>
+                    <h4 className="fw-bold mb-0">New Request</h4>
+                    <p className="text-muted mb-0 small">
+                      Fill in the patient and hospital details below.
+                    </p>
+                  </div>
                 </div>
-                <p className="text-muted mb-4">
-                  Fill in the patient and hospital details below.
-                </p>
+                <hr className="my-4" />
 
                 {feedback && (
                   <Alert
@@ -311,10 +353,9 @@ function BloodRequests() {
 
                   <Button
                     type="submit"
-                    variant="danger"
                     size="lg"
                     disabled={loading}
-                    className="w-100 fw-bold mt-4 d-flex align-items-center justify-content-center gap-2"
+                    className="request-submit-btn w-100 fw-bold mt-4 d-flex align-items-center justify-content-center gap-2"
                   >
                     {loading ? (
                       <>
@@ -334,116 +375,124 @@ function BloodRequests() {
 
           {/* Recent requests */}
           <Col xs={12}>
-            <Card className="border-0 shadow-sm rounded-4">
-              <Card.Body className="p-4">
-                <div className="d-flex align-items-center justify-content-between mb-3">
-                  <div className="d-flex align-items-center gap-2">
-                    <FaClipboardList className="text-danger" />
-                    <h5 className="fw-bold mb-0">Recent Requests</h5>
-                  </div>
-                  {requests.length > 0 && (
-                    <Badge bg="danger-subtle" text="danger" className="rounded-pill">
-                      {requests.length}
-                    </Badge>
-                  )}
-                </div>
+            <div className="d-flex align-items-center gap-2 mb-3 px-1">
+              <FaClipboardList className="text-danger" />
+              <h5 className="fw-bold mb-0">Recent Requests</h5>
+              {requests.length > 0 && (
+                <Badge bg="danger-subtle" text="danger" className="rounded-pill ms-1">
+                  {requests.length}
+                </Badge>
+              )}
+            </div>
 
-                {requests.length > 0 ? (
-                  <Row className="g-3">
-                    {requests.map((request) => {
-                      const sv = statusVariant(request.status);
-                      return (
-                        <Col md={6} xl={4} key={request._id}>
-                        <Card
-                          className={`h-100 border-0 shadow-sm rounded-4 border-start border-4 border-${sv.text}`}
-                          role="button"
-                          onClick={() =>
-                            navigate(`/requests/${request._id}`)
-                          }
-                          style={{ cursor: "pointer" }}
-                          title="View request & contact details"
-                        >
-                          <Card.Body className="p-3">
-                            {/* Top row */}
-                            <div className="d-flex align-items-center gap-3 mb-2">
-                              <div
-                                className="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-                                style={{ width: 48, height: 48, fontSize: "0.95rem" }}
-                              >
-                                {request.bloodGroup}
-                              </div>
-                              <div className="flex-grow-1 min-w-0">
-                                <div className="fw-bold text-truncate">
-                                  {request.patientName}
-                                </div>
-                                <small className="text-muted d-block text-truncate">
-                                  {request.unitsRequired} unit
-                                  {request.unitsRequired > 1 ? "s" : ""} needed
-                                  {request.city ? ` · ${request.city}` : ""}
-                                </small>
+            {requests.length > 0 ? (
+              <Row className="g-3 g-md-4">
+                {requests.map((request) => {
+                  const sv = statusVariant(request.status);
+                  return (
+                    <Col md={6} xl={4} key={request._id}>
+                      <Card
+                        className={`request-card h-100 border-0 shadow-sm border-top border-4 border-${sv.text}`}
+                        role="button"
+                        onClick={() => navigate(`/requests/${request._id}`)}
+                        style={{ cursor: "pointer" }}
+                        title="View request & contact details"
+                      >
+                        <Card.Body className="p-4 d-flex flex-column">
+                          {/* Top row */}
+                          <div className="d-flex align-items-center gap-3 mb-3">
+                            <div className="request-avatar">
+                              {getInitials(request.patientName)}
+                            </div>
+                            <div className="flex-grow-1 min-w-0">
+                              <div className="fw-bold text-truncate">
+                                {request.patientName}
                               </div>
                               <Badge
                                 bg={sv.bg}
                                 text={sv.text}
-                                className="rounded-pill text-capitalize flex-shrink-0"
+                                className="rounded-pill text-capitalize"
                               >
                                 {request.status}
                               </Badge>
                             </div>
+                            <span className="request-bloodtag flex-shrink-0">
+                              {request.bloodGroup}
+                            </span>
+                          </div>
 
-                            {/* Hospital */}
+                          {/* Meta */}
+                          <div className="text-muted small mb-3">
+                            <div className="d-flex align-items-center gap-2 py-1">
+                              <FaHeartbeat size={13} className="text-danger" />
+                              {request.unitsRequired} unit
+                              {request.unitsRequired > 1 ? "s" : ""} needed
+                            </div>
+                            {request.city && (
+                              <div className="d-flex align-items-center gap-2 py-1">
+                                <FaMapMarkerAlt size={13} className="text-danger" />
+                                {request.city}
+                              </div>
+                            )}
                             {request.hospital && (
-                              <small className="text-muted d-flex align-items-center gap-1 mb-2">
-                                <FaHospital size={11} /> {request.hospital}
+                              <div className="d-flex align-items-center gap-2 py-1">
+                                <FaHospital size={13} className="text-danger" />
+                                <span className="text-truncate">
+                                  {request.hospital}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Contact actions */}
+                          <div className="d-flex flex-wrap gap-2 mt-auto">
+                            {request.phone && (
+                              <Button
+                                as="a"
+                                href={`tel:${request.phone}`}
+                                onClick={(e) => e.stopPropagation()}
+                                variant="danger"
+                                size="sm"
+                                className="rounded-pill fw-semibold d-inline-flex align-items-center gap-2 flex-grow-1 justify-content-center"
+                              >
+                                <FaPhoneAlt size={11} /> Call
+                              </Button>
+                            )}
+                            {request.email && (
+                              <Button
+                                as="a"
+                                href={`mailto:${request.email}`}
+                                onClick={(e) => e.stopPropagation()}
+                                variant="outline-danger"
+                                size="sm"
+                                className="rounded-pill fw-semibold d-inline-flex align-items-center gap-2 flex-grow-1 justify-content-center"
+                              >
+                                <FaEnvelope size={11} /> Email
+                              </Button>
+                            )}
+                            {!request.phone && !request.email && (
+                              <small className="text-muted fst-italic">
+                                No contact provided
                               </small>
                             )}
-
-                            {/* Contact actions */}
-                            <div className="d-flex flex-wrap gap-2">
-                              {request.phone && (
-                                <Button
-                                  as="a"
-                                  href={`tel:${request.phone}`}
-                                  onClick={(e) => e.stopPropagation()}
-                                  variant="danger"
-                                  size="sm"
-                                  className="rounded-pill fw-semibold d-inline-flex align-items-center gap-2"
-                                >
-                                  <FaPhoneAlt size={11} /> Call
-                                </Button>
-                              )}
-                              {request.email && (
-                                <Button
-                                  as="a"
-                                  href={`mailto:${request.email}`}
-                                  onClick={(e) => e.stopPropagation()}
-                                  variant="outline-danger"
-                                  size="sm"
-                                  className="rounded-pill fw-semibold d-inline-flex align-items-center gap-2"
-                                >
-                                  <FaEnvelope size={11} /> Email
-                                </Button>
-                              )}
-                              {!request.phone && !request.email && (
-                                <small className="text-muted fst-italic">
-                                  No contact provided
-                                </small>
-                              )}
-                            </div>
-                          </Card.Body>
-                        </Card>
-                        </Col>
-                      );
-                    })}
-                  </Row>
-                ) : (
-                  <div className="text-center text-muted py-5">
-                    <FaInbox size={38} className="text-danger-subtle mb-3" />
-                    <p className="mb-0">No requests yet.</p>
-                  </div>
-                )}
-              </Card.Body>
-            </Card>
+                          </div>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  );
+                })}
+              </Row>
+            ) : (
+              <Card className="border-0 shadow-sm rounded-4">
+                <Card.Body className="text-center text-muted py-5">
+                  <FaInbox size={42} className="text-danger mb-3 opacity-50" />
+                  <h5 className="fw-bold text-dark">No requests yet</h5>
+                  <p className="mb-0">
+                    Submit the form above to raise the first blood request.
+                  </p>
+                </Card.Body>
+              </Card>
+            )}
           </Col>
         </Row>
       </Container>

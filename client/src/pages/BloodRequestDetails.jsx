@@ -21,12 +21,17 @@ import {
   FaArrowLeft,
   FaCalendarAlt,
   FaClipboardList,
+  FaCopy,
+  FaCheck,
+  FaShareAlt,
 } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
 import { getRequestById } from "../services/requestService";
+
+import "./BloodRequestDetails.css";
 
 function BloodRequestDetails() {
   const { id } = useParams();
@@ -35,6 +40,39 @@ function BloodRequestDetails() {
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [copied, setCopied] = useState(null); // which field was just copied
+  const [shareMsg, setShareMsg] = useState(null);
+
+  // Copy a value to the clipboard and briefly flag which one was copied.
+  const copyToClipboard = async (text, key) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(key);
+      setTimeout(() => setCopied(null), 1500);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // Share the request via the native share sheet, or fall back to copying the link.
+  const handleShare = async () => {
+    const shareData = {
+      title: "BloodConnect - Blood Request",
+      text: "A blood request on BloodConnect needs help.",
+      url: window.location.href,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        setShareMsg("Link copied!");
+        setTimeout(() => setShareMsg(null), 1500);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     const fetchRequest = async () => {
@@ -98,19 +136,53 @@ function BloodRequestDetails() {
       <Navbar />
 
       {/* Hero */}
-      <div className="bg-danger text-white py-5">
+      <div className="rd-hero text-white py-5">
         <Container>
           <Button
             variant="link"
             onClick={() => navigate(-1)}
-            className="text-white text-decoration-none p-0 mb-3 d-inline-flex align-items-center gap-2"
+            className="rd-back-btn text-decoration-none p-0 mb-3 d-inline-flex align-items-center gap-2"
           >
             <FaArrowLeft /> Back
           </Button>
-          <h1 className="fw-bold display-6 mb-1">Blood Request Details</h1>
-          <p className="text-white-50 mb-0">
-            Full information about this blood request and the requester.
-          </p>
+
+          <div className="d-flex flex-wrap align-items-center gap-3 gap-md-4">
+            {request && (
+              <div className="rd-blood-badge">{request.bloodGroup}</div>
+            )}
+            <div className="flex-grow-1">
+              <h1 className="rd-hero-title mb-1">
+                {request ? `${request.patientName}` : "Blood Request Details"}
+              </h1>
+              <p className="text-white opacity-75 mb-0">
+                {request
+                  ? `Needs ${request.unitsRequired} unit${
+                      request.unitsRequired > 1 ? "s" : ""
+                    } of ${request.bloodGroup}${
+                      request.city ? ` in ${request.city}` : ""
+                    }`
+                  : "Full information about this blood request and the requester."}
+              </p>
+            </div>
+            {request && (
+              <div className="d-flex align-items-center gap-2">
+                <Badge
+                  bg="light"
+                  text={statusVariant(request.status).text}
+                  className="rounded-pill px-3 py-2 fw-semibold"
+                >
+                  {request.status}
+                </Badge>
+                <Button
+                  onClick={handleShare}
+                  variant="light"
+                  className="rd-action-btn text-danger fw-semibold d-inline-flex align-items-center gap-2"
+                >
+                  <FaShareAlt /> {shareMsg || "Share"}
+                </Button>
+              </div>
+            )}
+          </div>
         </Container>
       </div>
 
@@ -128,67 +200,58 @@ function BloodRequestDetails() {
           <Row className="g-4 justify-content-center">
             {/* Request details */}
             <Col lg={7}>
-              <Card className="border-0 shadow-sm rounded-4 h-100">
+              <Card className="rd-card border-0 shadow-sm h-100">
                 <Card.Body className="p-4 p-md-5">
-                  <div className="d-flex align-items-center justify-content-between mb-4">
-                    <div className="d-flex align-items-center gap-2">
-                      <FaClipboardList className="text-danger" />
-                      <h4 className="fw-bold mb-0">Request Information</h4>
-                    </div>
-                    <Badge
-                      bg={statusVariant(request.status).bg}
-                      text={statusVariant(request.status).text}
-                      className="rounded-pill px-3 py-2"
-                    >
-                      {request.status}
-                    </Badge>
+                  <div className="d-flex align-items-center gap-2 mb-4">
+                    <FaClipboardList className="text-danger" />
+                    <h4 className="fw-bold mb-0">Request Information</h4>
                   </div>
 
-                  <Row className="g-4">
-                    <Col sm={6}>
-                      <small className="text-muted d-flex align-items-center gap-2">
-                        <FaUser /> Patient Name
-                      </small>
-                      <div className="fw-semibold fs-5">
-                        {request.patientName}
-                      </div>
-                    </Col>
-                    <Col sm={6}>
-                      <small className="text-muted d-flex align-items-center gap-2">
-                        <FaTint /> Blood Group
-                      </small>
-                      <Badge bg="danger" className="rounded-3 px-3 py-2 fs-6 mt-1">
-                        {request.bloodGroup}
-                      </Badge>
-                    </Col>
-                    <Col sm={6}>
-                      <small className="text-muted d-flex align-items-center gap-2">
-                        <FaHeartbeat /> Units Required
-                      </small>
-                      <div className="fw-semibold fs-5">
-                        {request.unitsRequired}
-                      </div>
-                    </Col>
-                    <Col sm={6}>
-                      <small className="text-muted d-flex align-items-center gap-2">
-                        <FaHospital /> Hospital
-                      </small>
-                      <div className="fw-semibold fs-5">{request.hospital}</div>
-                    </Col>
-                    <Col sm={6}>
-                      <small className="text-muted d-flex align-items-center gap-2">
-                        <FaMapMarkerAlt /> City
-                      </small>
-                      <div className="fw-semibold fs-5">{request.city}</div>
-                    </Col>
-                    <Col sm={6}>
-                      <small className="text-muted d-flex align-items-center gap-2">
-                        <FaCalendarAlt /> Requested On
-                      </small>
-                      <div className="fw-semibold fs-5">
-                        {formatDate(request.createdAt)}
-                      </div>
-                    </Col>
+                  <Row className="g-3">
+                    {[
+                      {
+                        icon: <FaUser />,
+                        label: "Patient Name",
+                        value: request.patientName,
+                      },
+                      {
+                        icon: <FaTint />,
+                        label: "Blood Group",
+                        value: request.bloodGroup,
+                      },
+                      {
+                        icon: <FaHeartbeat />,
+                        label: "Units Required",
+                        value: `${request.unitsRequired} unit${
+                          request.unitsRequired > 1 ? "s" : ""
+                        }`,
+                      },
+                      {
+                        icon: <FaHospital />,
+                        label: "Hospital",
+                        value: request.hospital || "—",
+                      },
+                      {
+                        icon: <FaMapMarkerAlt />,
+                        label: "City",
+                        value: request.city || "—",
+                      },
+                      {
+                        icon: <FaCalendarAlt />,
+                        label: "Requested On",
+                        value: formatDate(request.createdAt),
+                      },
+                    ].map((item, i) => (
+                      <Col sm={6} key={i}>
+                        <div className="rd-tile d-flex align-items-start gap-3">
+                          <span className="rd-tile-icon">{item.icon}</span>
+                          <div className="min-w-0">
+                            <div className="rd-tile-label">{item.label}</div>
+                            <div className="rd-tile-value">{item.value}</div>
+                          </div>
+                        </div>
+                      </Col>
+                    ))}
                   </Row>
                 </Card.Body>
               </Card>
@@ -196,53 +259,87 @@ function BloodRequestDetails() {
 
             {/* Contact for this request */}
             <Col lg={5}>
-              <Card className="border-0 shadow-sm rounded-4 h-100">
+              <Card className="rd-contact-card rd-contact-sticky border-0 shadow-sm">
                 <Card.Body className="p-4 p-md-5">
                   <h4 className="fw-bold mb-4">Contact for this Request</h4>
 
                   {contactPhone || contactEmail ? (
                     <>
                       <div className="d-flex align-items-center gap-3 mb-4">
-                        <div
-                          className="bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0"
-                          style={{ width: 60, height: 60, fontSize: "1.3rem" }}
-                        >
+                        <div className="rd-avatar">
                           {getInitials(contactName)}
                         </div>
-                        <div>
-                          <h5 className="fw-bold mb-0">{contactName}</h5>
-                          <Badge bg="danger" className="rounded-3 mt-1">
+                        <div className="min-w-0">
+                          <h5 className="fw-bold mb-1 text-truncate">
+                            {contactName}
+                          </h5>
+                          <Badge bg="danger" className="rounded-3">
                             Needs {request.bloodGroup}
                           </Badge>
                         </div>
                       </div>
 
-                      <ul className="list-unstyled mb-4">
-                        {contactEmail && (
-                          <li className="d-flex align-items-center gap-3 mb-3">
-                            <span className="bg-danger-subtle text-danger rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 38, height: 38 }}>
-                              <FaEnvelope />
-                            </span>
-                            <span className="text-break">{contactEmail}</span>
-                          </li>
-                        )}
+                      <div className="mb-4">
                         {contactPhone && (
-                          <li className="d-flex align-items-center gap-3 mb-3">
-                            <span className="bg-danger-subtle text-danger rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 38, height: 38 }}>
+                          <div className="rd-contact-row">
+                            <span className="rd-contact-icon">
                               <FaPhoneAlt />
                             </span>
-                            <span>{contactPhone}</span>
-                          </li>
+                            <div className="rd-contact-text">
+                              <div className="label">Phone</div>
+                              <div className="value">{contactPhone}</div>
+                            </div>
+                            <button
+                              type="button"
+                              className={`rd-copy-btn ${
+                                copied === "phone" ? "copied" : ""
+                              }`}
+                              onClick={() =>
+                                copyToClipboard(contactPhone, "phone")
+                              }
+                              title="Copy phone number"
+                              aria-label="Copy phone number"
+                            >
+                              {copied === "phone" ? <FaCheck /> : <FaCopy />}
+                            </button>
+                          </div>
+                        )}
+                        {contactEmail && (
+                          <div className="rd-contact-row">
+                            <span className="rd-contact-icon">
+                              <FaEnvelope />
+                            </span>
+                            <div className="rd-contact-text">
+                              <div className="label">Email</div>
+                              <div className="value">{contactEmail}</div>
+                            </div>
+                            <button
+                              type="button"
+                              className={`rd-copy-btn ${
+                                copied === "email" ? "copied" : ""
+                              }`}
+                              onClick={() =>
+                                copyToClipboard(contactEmail, "email")
+                              }
+                              title="Copy email address"
+                              aria-label="Copy email address"
+                            >
+                              {copied === "email" ? <FaCheck /> : <FaCopy />}
+                            </button>
+                          </div>
                         )}
                         {contactCity && (
-                          <li className="d-flex align-items-center gap-3">
-                            <span className="bg-danger-subtle text-danger rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 38, height: 38 }}>
+                          <div className="rd-contact-row">
+                            <span className="rd-contact-icon">
                               <FaMapMarkerAlt />
                             </span>
-                            <span>{contactCity}</span>
-                          </li>
+                            <div className="rd-contact-text">
+                              <div className="label">City</div>
+                              <div className="value">{contactCity}</div>
+                            </div>
+                          </div>
                         )}
-                      </ul>
+                      </div>
 
                       <div className="d-grid gap-2">
                         {contactPhone && (
@@ -250,7 +347,7 @@ function BloodRequestDetails() {
                             as="a"
                             href={`tel:${contactPhone}`}
                             variant="danger"
-                            className="rounded-pill fw-semibold d-flex align-items-center justify-content-center gap-2"
+                            className="rd-action-btn fw-semibold d-flex align-items-center justify-content-center gap-2"
                           >
                             <FaPhoneAlt /> Call Now
                           </Button>
@@ -260,7 +357,7 @@ function BloodRequestDetails() {
                             as="a"
                             href={`mailto:${contactEmail}`}
                             variant="outline-danger"
-                            className="rounded-pill fw-semibold d-flex align-items-center justify-content-center gap-2"
+                            className="rd-action-btn fw-semibold d-flex align-items-center justify-content-center gap-2"
                           >
                             <FaEnvelope /> Send Email
                           </Button>

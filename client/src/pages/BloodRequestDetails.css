@@ -1,0 +1,228 @@
+/* ---- Blood request details page ---- */
+
+.rd-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #CC1036 0%, #9B1250 50%, #7A1062 100%);
+  isolation: isolate;
+}
+
+.rd-hero::before,
+.rd-hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.rd-hero::before {
+  width: 340px;
+  height: 340px;
+  top: -150px;
+  right: -90px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 70%);
+}
+
+.rd-hero::after {
+  width: 280px;
+  height: 280px;
+  bottom: -140px;
+  left: -80px;
+  background: radial-gradient(circle, rgba(255, 196, 0, 0.13), transparent 70%);
+}
+
+.rd-back-btn {
+  color: rgba(255, 255, 255, 0.85);
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.rd-back-btn:hover {
+  color: #fff;
+}
+
+.rd-hero-title {
+  font-size: clamp(1.7rem, 4.5vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.18);
+}
+
+/* Big blood-group medallion in the hero */
+.rd-blood-badge {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: #CC1036;
+  background: #fff;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.22);
+  flex-shrink: 0;
+}
+
+/* Cards */
+.rd-card {
+  border-radius: 1.25rem;
+}
+
+/* Info tiles */
+.rd-tile {
+  border: 1px solid #eef0f2;
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+  height: 100%;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.rd-tile:hover {
+  transform: translateY(-4px);
+  border-color: transparent;
+  box-shadow: 0 0.9rem 1.8rem rgba(15, 23, 42, 0.1);
+}
+
+.rd-tile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff1f3;
+  color: #CC1036;
+  flex-shrink: 0;
+}
+
+.rd-tile-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a9099;
+  font-weight: 600;
+}
+
+.rd-tile-value {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #1f2937;
+  word-break: break-word;
+}
+
+/* Contact card sticks while scrolling on desktop */
+.rd-contact-card {
+  border-radius: 1.25rem;
+}
+
+@media (min-width: 992px) {
+  .rd-contact-sticky {
+    position: sticky;
+    top: 88px;
+  }
+}
+
+.rd-avatar {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #fff;
+  background: linear-gradient(135deg, #CC1036, #7A1062);
+  box-shadow: 0 6px 16px rgba(204, 16, 54, 0.3);
+  flex-shrink: 0;
+}
+
+/* Clickable contact rows with copy */
+.rd-contact-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.85rem;
+  transition: background 0.2s ease;
+}
+
+.rd-contact-row:hover {
+  background: #f8f9fa;
+}
+
+.rd-contact-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff1f3;
+  color: #CC1036;
+  flex-shrink: 0;
+}
+
+.rd-contact-text {
+  min-width: 0;
+  flex-grow: 1;
+}
+
+.rd-contact-text .label {
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #8a9099;
+  font-weight: 600;
+}
+
+.rd-contact-text .value {
+  font-weight: 600;
+  color: #1f2937;
+  word-break: break-word;
+}
+
+.rd-copy-btn {
+  border: 0;
+  background: transparent;
+  color: #98a1ab;
+  border-radius: 0.6rem;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.rd-copy-btn:hover {
+  background: #fff1f3;
+  color: #CC1036;
+}
+
+.rd-copy-btn.copied {
+  color: #059669;
+}
+
+.rd-action-btn {
+  border-radius: 999px;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rd-action-btn:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rd-tile,
+  .rd-action-btn {
+    transition: none;
+  }
+  .rd-tile:hover,
+  .rd-action-btn:hover {
+    transform: none;
+  }
+}

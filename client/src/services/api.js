@@ -4,8 +4,7 @@ import axios from "axios";
 // point at a deployed backend; falls back to local dev.
 const api = axios.create({
   baseURL:
-    process.env.REACT_APP_API_URL ||
-    "https://blood-connect-backend-t4k9.onrender.com/api",
+    process.env.REACT_APP_API_URL || "http://localhost:5000/api",
 });
 
 // Attach the auth token automatically to every request when present, so

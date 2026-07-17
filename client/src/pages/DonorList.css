@@ -1,0 +1,150 @@
+/* ---- Donor directory page ---- */
+
+.donor-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #047857 0%, #059669 55%, #10b981 100%);
+  isolation: isolate;
+}
+
+/* Decorative glows for depth */
+.donor-hero::before,
+.donor-hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.donor-hero::before {
+  width: 360px;
+  height: 360px;
+  top: -140px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 70%);
+}
+
+.donor-hero::after {
+  width: 300px;
+  height: 300px;
+  bottom: -130px;
+  left: -90px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent 70%);
+}
+
+.donor-hero-title {
+  font-size: clamp(1.9rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+}
+
+.donor-hero-sub {
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  max-width: 560px;
+}
+
+/* Quick-stat pills in the hero */
+.donor-hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.donor-stat-pill {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  backdrop-filter: blur(6px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.donor-stat-pill strong {
+  font-size: 1.05rem;
+}
+
+/* Search card floats up over the hero */
+.donor-search-card {
+  margin-top: -2.75rem;
+  border-radius: 1.25rem;
+  box-shadow: 0 1.5rem 3rem rgba(4, 120, 87, 0.15);
+}
+
+/* Donor cards */
+.donor-card {
+  border-radius: 1.25rem;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+  overflow: hidden;
+}
+
+.donor-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 1.25rem 2.5rem rgba(15, 23, 42, 0.14) !important;
+}
+
+/* Thin accent strip on top of each card */
+.donor-card-strip {
+  height: 6px;
+  background: linear-gradient(90deg, #059669, #10b981);
+}
+
+.donor-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #fff;
+  background: linear-gradient(135deg, #047857, #10b981);
+  box-shadow: 0 6px 16px rgba(4, 120, 87, 0.3);
+  flex-shrink: 0;
+}
+
+.donor-bloodtag {
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  background: linear-gradient(135deg, #e11d48, #f43f5e);
+  color: #fff;
+  line-height: 1;
+}
+
+.donor-meta {
+  font-size: 0.85rem;
+}
+
+.donor-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+}
+
+.donor-meta-row svg {
+  color: #059669;
+  flex-shrink: 0;
+}
+
+.donor-call-btn {
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .donor-card {
+    transition: none;
+  }
+  .donor-card:hover {
+    transform: none;
+  }
+}
